@@ -76,14 +76,3 @@ class RecipeChatBot(ChatBotWithHistory):
         for chunk in self.stream_response(message):
             yield(chunk)
 
-
-if __name__ == "__main__":
-    url = "https://sugarspunrun.com/homemade-garlic-knots-recipe/"
-    chatbot = RecipeChatBot()
-    for chunk in chatbot.extract_recipe(url):
-        print(chunk)
-    print(chatbot.history)
-    print(chatbot.recipe)
-    # chatbot = RecipeChatBot()
-    # for chunk in chatbot.stream_response("Say Hello world!"):
-    #     print(chunk)

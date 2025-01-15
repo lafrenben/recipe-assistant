@@ -1,4 +1,4 @@
-# Recipe Bot
+# Recipe Assistant
 
 ## Setup
 
