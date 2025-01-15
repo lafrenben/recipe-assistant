@@ -1,0 +1,25 @@
+GET http://localhost:4000/
+
+###
+
+GET http://localhost:4000/api
+content-type: application/json
+
+###
+
+GET http://localhost:4000/api/recipe?url=https://www.allrecipes.com/recipe/10813/best-chocolate-chip-cookies/
+content-type: application/json
+
+###
+
+POST http://localhost:4000/api/chat/d6a627d0-a1e1-44b3-89c7-21c1e51f33c8
+content-type: application/json
+
+{
+    "message": "How much yeast is required in this recipe?"
+}
+
+###
+
+GET http://localhost:4000/api/chat_history/64ed884c-a8be-4ba6-a5fb-cb524e51bade
+content-type: application/json

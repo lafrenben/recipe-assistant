@@ -1,0 +1,29 @@
+[project]
+name = "recipebot"
+version = "0.1.0"
+description = "LLM-based assistant for recipes"
+authors = [
+    {name = "Ben Lafreniere"}
+]
+license = "MIT"
+readme = "README.md"
+requires-python = ">=3.13,<4.0"
+dependencies = [
+    "python-dotenv (>=1.0.1,<2.0.0)",
+    "openai (>=1.59.6,<2.0.0)",
+    "langchain-community (>=0.3.14,<0.4.0)",
+    "html2text (>=2024.2.26,<2025.0.0)",
+    "fastapi (>=0.115.6,<0.116.0)",
+    "uvicorn (>=0.34.0,<0.35.0)",
+]
+
+[tool.poetry]
+package-mode = false
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+jupyter = "^1.1.1"
+
