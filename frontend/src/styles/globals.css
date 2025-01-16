@@ -20,6 +20,10 @@ body {
   overflow-y: auto;
 }
 
+.recipe-title {
+  font-weight: bold;
+}
+
 li.instruction {
   margin-bottom: 0.5rem;
 }

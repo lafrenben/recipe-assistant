@@ -1,11 +1,33 @@
 import React from 'react';
-import { Card, Row, Col, ListGroup } from 'react-bootstrap';
+import { Card, Row, Col, ListGroup, Button } from 'react-bootstrap';
 
-function RecipeDisplay({ recipe }) {
+function RecipeDisplay({ recipe, userInterfaceActions, onUserInterfaceAction }) {
   return (
     <Card className="my-3">
       <Card.Body>
-        {recipe.name && <Card.Title>{recipe.name}</Card.Title>}
+        {recipe.name && <Card.Title className="recipe-title">{recipe.name}</Card.Title>}
+        {(recipe.prep_time || recipe.cook_time || recipe.yield) && (
+          <div className="mb-3 text-muted">
+            {recipe.prep_time && `Prep Time: ${recipe.prep_time}, `}
+            {recipe.cook_time && `Cook Time: ${recipe.cook_time}, `}
+            {recipe.yield && ` Yield: ${recipe.yield}`}
+          </div>
+        )}
+        {userInterfaceActions && recipe.ingredients && ( // only show the actions once the ingredients are available
+          <div className="mb-3">
+            {userInterfaceActions.map((uiAction) => (
+              <Button
+                key={uiAction.label} // Add a key prop to avoid React warnings
+                variant="outline-primary"
+                className="me-1"
+                title={uiAction.request}
+                onClick={() => onUserInterfaceAction(uiAction.label, uiAction.request)}
+              >
+                {uiAction.label}
+              </Button>
+            ))}
+          </div>
+        )}
         <Row>
           {recipe.ingredients && (
             <Col md={6}>
@@ -35,17 +57,6 @@ function RecipeDisplay({ recipe }) {
             </Col>
           )}
         </Row>
-        {(recipe.prep_time || recipe.cook_time || recipe.yield) && (
-          <Row className="mt-3">
-            <Col>
-              <span className="text-muted">
-                {recipe.prep_time && `Prep Time: ${recipe.prep_time}, `}
-                {recipe.cook_time && `Cook Time: ${recipe.cook_time}, `}
-                {recipe.yield && ` Yield: ${recipe.yield}`}
-              </span>
-            </Col>
-          </Row>
-        )}
       </Card.Body>
     </Card>
   );

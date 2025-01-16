@@ -18,7 +18,29 @@ function App() {
   const [threadId, setThreadId] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-
+  const [userInterfaceActions, setUserInterfaceActions] = useState([
+    {
+      'type': 'button',
+      'label': '0.5x',
+      'request': "Modify the ingredients and instructions to halve the original recipe. Keep any annotations previously provided, modifying them appropriately."
+    },
+    {
+      'type': 'button',
+      'label': '1x',
+      'request': "Show me the recipe at 1x (not doubled or halved). Keep any annotations previously provided, modifying them appropriately."
+    },
+    {
+      'type': 'button',
+      'label': '2x',
+      'request': "Modify the ingredients and instructions to double the original recipe. Keep any annotations previously provided, modifying them appropriately."
+    },
+    {
+      'type': 'button',
+      'label': 'No dairy',
+      'request': "Annotate the recipe with substitutions for ingredients that contain dairy."
+    },
+  ]);
+  
   const handleRecipeSubmit = (url) => {
     (async () => {
       setIsLoading(true);
@@ -55,6 +77,67 @@ function App() {
     })();
   };
 
+  const sendMessageToAssistant = async (message, threadId, setMessages, setRecipe, setThreadId, setIsLoading) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/chat/${threadId}`, {
+        method: "post",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: message
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Server response was not ok');
+      }
+  
+      const decoder = new TextDecoderStream();
+      const reader = response.body.pipeThrough(decoder).getReader();
+      let acc = "";
+      let response_json;
+  
+      // Add a new blank message for the reply, which we will fill with the streamed content 
+      setMessages(prevMessages => {
+        const updatedMessages = [...prevMessages, { role: 'assistant', content: '' }];
+        return updatedMessages;
+      });
+  
+      while (true) {
+        let { value, done } = await reader.read();
+        if (done) break;
+        acc += value;
+        response_json = parse(acc);
+  
+        // If we've parsed enough of the JSON to start displaying the recipe...
+        if (response_json && response_json.length > 1) {
+          if (response_json[1].type && response_json[1].response) {
+            if (response_json[1].type === 'RecipeResponse') {
+              setRecipe(response_json[1].response);
+            }
+            if (response_json[1].type === 'ConversationalResponse') {
+              setMessages(prevMessages => {
+                const updatedMessages = [...prevMessages];
+                updatedMessages[updatedMessages.length - 1] = {
+                  role: 'assistant',
+                  content: JSON.stringify(response_json[1])
+                };
+                return updatedMessages;
+              });
+            }
+          }
+        }
+      }
+      setThreadId(response_json[0].thread_id);
+  
+    } catch (error) {
+      console.error('Error fetching recipe:', error);
+    }
+    setIsLoading(false);
+  };  
 
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -65,76 +148,7 @@ function App() {
         return updatedMessages;
       });
 
-      (async () => {
-        setIsLoading(true);
-        try {
-          const response = await fetch(`${BACKEND_URL}/api/chat/${threadId}`, {
-            method: "post",
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              message: newMessage
-            }),
-          });
-
-          if (!response.ok) {
-            throw new Error('Server response was not ok');
-          }
-  
-          const decoder = new TextDecoderStream();
-          const reader = response.body.pipeThrough(decoder).getReader();
-          let acc = ""
-          let response_json;
-
-          // Add a new blank message for the reply, which we will fill with the streamed content 
-          setMessages(prevMessages => {
-            const updatedMessages = [...prevMessages, { role: 'assistant', content: '' }];
-            return updatedMessages;
-          });
-              
-          while (true) {
-            let { value, done } = await reader.read();
-            if (done) break;
-            acc += value;
-            response_json = parse(acc);
-  
-            // If we've parsed enough of the JSON to start displaying the recipe...
-            if (response_json && response_json.length > 1) {
-              if (response_json[1].type && response_json[1].response) {
-                if (response_json[1].type === 'RecipeResponse') {
-                  setRecipe(response_json[1].response)
-                }
-                if (response_json[1].type === 'ConversationalResponse') {
-
-                  setMessages(prevMessages => {
-                    const updatedMessages = [...prevMessages]
-                    updatedMessages[updatedMessages.length - 1] = {
-                      role: 'assistant',
-                      content: JSON.stringify(response_json[1])
-                    }
-                    return updatedMessages
-                  });
-
-                  // if (existing_partial_message) {
-                  //   // Remove the old partial message
-                  //   setMessages((prevMessages) => prevMessages.slice(0, -1));
-                  // }
-                  // // Add the partial message
-                  // setMessages([...messages, { role: 'assistant', 'content': JSON.stringify(response_json[1].response) } ]);
-                  // existing_partial_message = true;
-                }
-              }
-            }
-          }
-          setThreadId(response_json[0].thread_id);
-  
-        } catch (error) {
-          console.error('Error fetching recipe:', error);
-        }
-        setIsLoading(false);
-      })();
+      sendMessageToAssistant(newMessage, threadId, setMessages, setRecipe, setThreadId, setIsLoading);
 
       // Clear the message input field
       setNewMessage('');
@@ -145,6 +159,10 @@ function App() {
     setNewMessage(e.target.value);
   };
 
+  const handleUserInterfaceAction = (label, request) => {
+    sendMessageToAssistant(request, threadId, setMessages, setRecipe, setThreadId, setIsLoading);
+  };
+
   return (
     <div className="app-container">
       <Navbar onToggleChat={() => setShowChat(!showChat)} isLoading={isLoading} />
@@ -153,7 +171,7 @@ function App() {
           <Row>
             <Col>
               <RecipeInput onSubmit={handleRecipeSubmit} isLoading={isLoading} />
-              {recipe && <RecipeDisplay recipe={recipe} />}
+              {recipe && <RecipeDisplay recipe={recipe} userInterfaceActions={userInterfaceActions} onUserInterfaceAction={handleUserInterfaceAction} />}
             </Col>
           </Row>
         </Container>
