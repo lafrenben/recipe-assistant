@@ -7,7 +7,7 @@ from langchain_community.document_transformers import Html2TextTransformer
 LLM_MODEL = "gpt-4o-mini"
 
 ASSISTANT_PROMPT = """
-You are an AI assistant that helps with reading webpages with recipes on them, extracting the recipe information on the page into a structured JSON format, and providing additional conversational assistance to the user who is using the recipe.
+You are an AI assistant that helps with reading webpages with recipes on them, extracting the recipe information on the page into a structured JSON format, and providing additional conversational assistance to the user who is using the recipe. Make your responses as accurate as possible, and if you are unsure of an answer or parameter, say that you don't know or leave the field blank.
 
 If you are asked to extract a recipe from webpage text, or to make modifications to a recipe you have previously extracted, you should structure your output using the 'RecipeResponse' format. If you are asked questions about the recipe, questions about additional content on the webpage, or questions about cooking in general, you should respond using the 'ConversationalResponse' format.
 """
@@ -25,14 +25,14 @@ class Ingredient(BaseModel):
     quantity: str = Field(description="Quantity or number of units of the ingredient. Can be left blank if a quantity is not specified (e.g., 'salt to taste' or 'black pepper').")
     name: str = Field(description="Name of the ingredient, including any qualifiers like 'chopped' or 'diced' or 'large' or 'freshly ground'. Don't include quantities or units here as they should be in the 'quantity' field.")
     id: str = Field(description="Unique identifier for the ingredient in form '$I1', '$I2', etc.")
-    section: str = Field(description="Optional section or category that the ingredient belongs to, like 'For the sauce' or 'For the dough'. Include this only if the recipe includes multiple sections in the list of ingredients.")
-    annotations: str = Field(description="Use this field to provide annotations on the ingredient, if they are requested by the user. For example, if the user asks for substitutions or unit conversions, you could provide those details here. Leave blank when initially extracting the recipe.")
+    section: str = Field(description="Section or category that the ingredient belongs to, like 'For the sauce' or 'For the dough'. This is optional, and should only be included if the recipe includes multiple sections in the list of ingredients. Do not use this field for optional ingredients in the recipe, instead use the 'annotations' field.")
+    annotations: str = Field(description="Use this field to provide annotations on the ingredient. For example, if the user asks for substitutions or unit conversions, you could provide those details here. Can also be used if the recipe webpage includes annotations like 'optional' on an ingredient.")
 
 class Instruction(BaseModel):
     """One instruction in a recipe."""
     id: str = Field(description="Unique identifier for the instruction in form '$S1', '$S2', etc.")
     text: str = Field(description="A single step in the recipe, extracted from the page text. Follow the structure of the text for cues on how to split the instructions into steps.")
-    annotations: str = Field(description="Use this field to provide annotations on the instruction, if they are requested by the user. For example, if the user asks for an estimate of how long each step takes, you could provide those details here. Leave blank when initially extracting the recipe.")
+    annotations: str = Field(description="Use this field to provide annotations on the instruction. For example, if the user asks for an estimate of how long each step takes, you could provide those details here. Leave blank when initially extracting the recipe.")
 
 class RecipeResponse(BaseModel):
     """Recipe extracted from a website."""
