@@ -9,7 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './styles/globals.css'
 
-const BACKEND_URL = "http://localhost:4000"
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:4000";
 
 function App() {
   const [recipe, setRecipe] = useState(null);
