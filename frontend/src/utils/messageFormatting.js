@@ -20,9 +20,6 @@ export function formatMessage(message) {
 
     const { role, content } = message;
 
-    console.log("Formatting:");
-    console.log(message);
-
     if (role === 'user') {
       return { role, content };
     }
@@ -32,7 +29,7 @@ export function formatMessage(message) {
       try {
         parsedContent = JSON.parse(content);
       } catch (error) {
-        console.error('Error parsing assistant message content:', error);
+        // console.error('Error parsing assistant message content:', error);
         return null;
       }
 
