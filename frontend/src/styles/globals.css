@@ -14,6 +14,14 @@ body {
   overflow: hidden;
 }
 
+.navbar-custom {
+  background-color: #3a3a3a !important;
+}
+
+.logo-emoji {
+  font-size: x-large;
+}
+
 .main-content {
   flex-grow: 1;
   padding-left: 30px;

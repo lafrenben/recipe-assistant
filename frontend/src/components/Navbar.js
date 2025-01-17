@@ -4,9 +4,9 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 
 function Navbar({ onToggleChat, isLoading }) {
   return (
-    <BootstrapNavbar bg="dark" variant="dark" className="mb-3">
+    <BootstrapNavbar bg="dark" data-bs-theme="dark" className="mb-3 navbar-custom">
       <Container fluid>
-        <BootstrapNavbar.Brand href="#home" className="me-auto">👨‍🍳 Recipe Assistant</BootstrapNavbar.Brand>
+        <BootstrapNavbar.Brand href="#home" className="me-auto"><span className="logo-emoji">👨‍🍳</span> jump-to-recipe</BootstrapNavbar.Brand>
         <div className="d-flex align-items-center">
           {isLoading && (
             <Spinner animation="border" variant="light" size="sm" className="me-2" role="status">
