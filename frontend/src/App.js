@@ -3,6 +3,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import Navbar from './components/Navbar';
 import RecipeInput from './components/RecipeInput';
 import RecipeDisplay from './components/RecipeDisplay';
+import SettingsModal from './components/SettingsModal';
 import ChatPanel from './components/ChatPanel';
 import { parse } from 'partial-json'
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -40,12 +41,13 @@ function App() {
       'request': "Annotate the recipe with substitutions for ingredients that contain dairy."
     },
   ]);
-  // const [standardAnnotations, setStandardAnnotations] = useState(
-  //   "- Annotate ingredients in US fluid oz (fl oz, ounces) with their mL equivalent (e.g., for '8-oz can tomato sauce', annotate '8-oz = 236.59 mL'). Don't annotate measures in 'cups' in this way.\n" +
-  //   "- Annotate ingredients in pounds (lbs) with kg equivalents (e.g., for '2 lb ground beef', annotate '2 lb = 0.907 kg')\n" +
-  //   "- Annotate instructions with a succinct list of the ingredients referenced in that instruction, including the amounts, e.g. '1 tsp chili powder, 1 tsp salt'.\n"
-  // );
-  const [standardAnnotations, setStandardAnnotations] = useState("");
+  const [standardAnnotations, setStandardAnnotations] = useState(
+    "- Annotate ingredients in US fluid oz (fl oz, ounces) with their mL equivalent (e.g., for '8-oz can tomato sauce', annotate '8-oz = 236.59 mL'). Don't annotate measures in 'cups' in this way.\n" +
+    "- Annotate ingredients in pounds (lbs) with kg equivalents (e.g., for '2 lb ground beef', annotate '2 lb = 0.907 kg')\n" +
+    "- Annotate instructions with a succinct list of the ingredients referenced in that instruction, including the amounts, e.g. '1 tsp chili powder, 1 tsp salt'.\n"
+  );
+  // const [standardAnnotations, setStandardAnnotations] = useState("");
+  const [showSettings, setShowSettings] = useState(false);
   
   const handleRecipeSubmit = (url) => {
     (async () => {
@@ -179,9 +181,25 @@ function App() {
     sendMessageToAssistant(request, threadId, setMessages, setRecipe, setThreadId, setIsLoading);
   };
 
+  const handleOpenSettings = () => {
+    setShowSettings(true);
+  };
+
+  const handleCloseSettings = () => {
+    setShowSettings(false);
+  };
+
+  const handleStandardAnnotationsChange = (e) => {
+    setStandardAnnotations(e.target.value);
+  };
+
   return (
     <div className="app-container">
-      <Navbar onToggleChat={() => setShowChat(!showChat)} isLoading={isLoading} />
+      <Navbar 
+        onToggleChat={() => setShowChat(!showChat)}
+        isLoading={isLoading}
+        onOpenSettings={handleOpenSettings}
+      />
       <div className="content-wrapper">
         <Container fluid className="main-content">
           <Row>
@@ -199,6 +217,12 @@ function App() {
           onNewMessageChange={handleNewMessageChange}
         />      
       </div>
+      <SettingsModal
+        show={showSettings}
+        onHide={handleCloseSettings}
+        standardAnnotations={standardAnnotations}
+        onStandardAnnotationsChange={handleStandardAnnotationsChange}
+      />
     </div>
   );
 }
