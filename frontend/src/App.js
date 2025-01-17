@@ -19,7 +19,7 @@ function App() {
   const [threadId, setThreadId] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const [userInterfaceActions, setUserInterfaceActions] = useState([
+  const [actionButtons, setActionButtons] = useState(JSON.stringify([
     {
       'type': 'button',
       'label': '0.5x',
@@ -40,7 +40,7 @@ function App() {
       'label': 'No dairy',
       'request': "Annotate the recipe with substitutions for ingredients that contain dairy."
     },
-  ]);
+  ], null, 2));
   const [standardAnnotations, setStandardAnnotations] = useState(
     "- Annotate ingredients in US fluid oz (fl oz, ounces) with their mL equivalent (e.g., for '8-oz can tomato sauce', annotate '8-oz = 236.59 mL'). Don't annotate measures in 'cups' in this way.\n" +
     "- Annotate ingredients in pounds (lbs) with kg equivalents (e.g., for '2 lb ground beef', annotate '2 lb = 0.907 kg')\n" +
@@ -193,6 +193,12 @@ function App() {
     setStandardAnnotations(e.target.value);
   };
 
+  const handleActionButtonsChange = (newValue, isValid) => {
+    if (isValid) {
+      setActionButtons(newValue);
+    }
+  };
+
   return (
     <div className="app-container">
       <Navbar 
@@ -205,7 +211,7 @@ function App() {
           <Row>
             <Col>
               <RecipeInput onSubmit={handleRecipeSubmit} isLoading={isLoading} />
-              {recipe && <RecipeDisplay recipe={recipe} userInterfaceActions={userInterfaceActions} onUserInterfaceAction={handleUserInterfaceAction} />}
+              {recipe && <RecipeDisplay recipe={recipe} actionButtons={actionButtons} onUserInterfaceAction={handleUserInterfaceAction} />}
             </Col>
           </Row>
         </Container>
@@ -222,6 +228,8 @@ function App() {
         onHide={handleCloseSettings}
         standardAnnotations={standardAnnotations}
         onStandardAnnotationsChange={handleStandardAnnotationsChange}
+        actionButtons={actionButtons}
+        onActionButtonsChange={handleActionButtonsChange}
       />
     </div>
   );

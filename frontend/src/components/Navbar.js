@@ -28,4 +28,3 @@ function Navbar({ onToggleChat, isLoading, onOpenSettings }) {
 }
 
 export default Navbar;
-

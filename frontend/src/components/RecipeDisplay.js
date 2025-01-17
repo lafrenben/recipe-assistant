@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Row, Col, ListGroup, Button } from 'react-bootstrap';
 
-function RecipeDisplay({ recipe, userInterfaceActions, onUserInterfaceAction }) {
+function RecipeDisplay({ recipe, actionButtons, onUserInterfaceAction }) {
   return (
     <Card className="my-3">
       <Card.Body>
@@ -13,9 +13,9 @@ function RecipeDisplay({ recipe, userInterfaceActions, onUserInterfaceAction }) 
             {recipe.yield && ` Yield: ${recipe.yield}`}
           </div>
         )}
-        {userInterfaceActions && recipe.ingredients && ( // only show the actions once the ingredients are available
+        {actionButtons && recipe.ingredients && ( // only show the actions once the ingredients are available
           <div className="mb-3">
-            {userInterfaceActions.map((uiAction) => (
+            {JSON.parse(actionButtons).map((uiAction) => (
               <Button
                 key={uiAction.label} // Add a key prop to avoid React warnings
                 variant="outline-primary"
