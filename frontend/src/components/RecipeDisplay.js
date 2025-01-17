@@ -37,7 +37,9 @@ function RecipeDisplay({ recipe, userInterfaceActions, onUserInterfaceAction }) 
                   <ListGroup.Item key={ingredient.id}>
                     {ingredient.quantity} {ingredient.name}
                     {ingredient.section && <small className="text-muted"> ({ingredient.section})</small>}
-                    {ingredient.annotations && <small className="text-muted"> {ingredient.annotations}</small>}
+                    {ingredient.annotations && (
+                      <small className="annotations-text"> {ingredient.annotations}</small>
+                    )}
                   </ListGroup.Item>
                 ))}
               </ListGroup>
@@ -50,7 +52,11 @@ function RecipeDisplay({ recipe, userInterfaceActions, onUserInterfaceAction }) 
                 {recipe.instructions.map((instruction) => (
                   <li key={instruction.id} className="instruction">
                     {instruction.text}
-                    {instruction.annotations && <p className="annotations"><small className="text-muted">{instruction.annotations}</small></p>}
+                    {instruction.annotations && (
+                      <p className="annotations">
+                        <small className="annotations-text"> {instruction.annotations}</small>
+                      </p>
+                    )}
                   </li>
                 ))}
               </ol>

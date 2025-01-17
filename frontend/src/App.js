@@ -40,12 +40,28 @@ function App() {
       'request': "Annotate the recipe with substitutions for ingredients that contain dairy."
     },
   ]);
+  // const [standardAnnotations, setStandardAnnotations] = useState(
+  //   "- Annotate ingredients in US fluid oz (fl oz, ounces) with their mL equivalent (e.g., for '8-oz can tomato sauce', annotate '8-oz = 236.59 mL'). Don't annotate measures in 'cups' in this way.\n" +
+  //   "- Annotate ingredients in pounds (lbs) with kg equivalents (e.g., for '2 lb ground beef', annotate '2 lb = 0.907 kg')\n" +
+  //   "- Annotate instructions with a succinct list of the ingredients referenced in that instruction, including the amounts, e.g. '1 tsp chili powder, 1 tsp salt'.\n"
+  // );
+  const [standardAnnotations, setStandardAnnotations] = useState("");
   
   const handleRecipeSubmit = (url) => {
     (async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`${BACKEND_URL}/api/recipe?url=${encodeURIComponent(url)}`);
+        const response = await fetch(`${BACKEND_URL}/api/recipe`, {
+          method: "post",
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            url: url,
+            annotations: standardAnnotations
+          }),
+        });
         if (!response.ok) {
           throw new Error('Server response was not ok');
         }

@@ -13,11 +13,14 @@ If you are asked to extract a recipe from webpage text, or to make modifications
 """
 
 INITIAL_EXTRACT_PROMPT = """
-Extract the recipe JSON from the following webpage text:
+Extract the recipe JSON from the webpage text below.
 
-####
+When extracting the JSON, apply the following annotations to ingredients and instructions:
+{annotation_list}
+
+##WEBPAGE_TEXT_START##
 {page_text}
-####
+##WEBPAGE_TEXT_END##
 """
 
 class Ingredient(BaseModel):
@@ -25,7 +28,7 @@ class Ingredient(BaseModel):
     quantity: str = Field(description="Quantity or number of units of the ingredient. Can be left blank if a quantity is not specified (e.g., 'salt to taste' or 'black pepper').")
     name: str = Field(description="Name of the ingredient, including any qualifiers like 'chopped' or 'diced' or 'large' or 'freshly ground'. Don't include quantities or units here as they should be in the 'quantity' field.")
     id: str = Field(description="Unique identifier for the ingredient in form '$I1', '$I2', etc.")
-    section: str = Field(description="Section or category that the ingredient belongs to, like 'For the sauce' or 'For the dough'. This is optional, and should only be included if the recipe includes multiple sections in the list of ingredients. Do not use this field for optional ingredients in the recipe, instead use the 'annotations' field.")
+    section: str = Field(description="Section or category that the ingredient belongs to, like 'Sauce' or 'Dough'. This is optional, and should only be included if the recipe includes multiple sections in the list of ingredients. Do not use this field for optional ingredients in the recipe, instead use the 'annotations' field.")
     annotations: str = Field(description="Use this field to provide annotations on the ingredient. For example, if the user asks for substitutions or unit conversions, you could provide those details here. Can also be used if the recipe webpage includes annotations like 'optional' on an ingredient.")
 
 class Instruction(BaseModel):
@@ -62,13 +65,15 @@ class RecipeChatBot(ChatBotWithHistory):
         page_text = docs_transformed[0].page_content
         return page_text
 
-    def extract_recipe(self, url):
+    def extract_recipe(self, url, annotations=""):
         if url != self.recipe_url or self.page_text is None:
             self.page_text = self.retrieve_page_text(url)
         self.recipe_url = url
 
+        annotation_list = annotations or '(None)'
+
         self.add_message("developer", ASSISTANT_PROMPT)
-        extract_prompt = INITIAL_EXTRACT_PROMPT.format(page_text=self.page_text)
+        extract_prompt = INITIAL_EXTRACT_PROMPT.format(page_text=self.page_text, annotation_list=annotation_list)
         for chunk in self.stream_response(extract_prompt):
             yield(chunk)
 

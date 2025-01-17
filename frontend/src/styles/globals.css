@@ -32,6 +32,10 @@ p.annotations {
   margin-bottom: 0;
 }
 
+.annotations-text {
+  color: firebrick;
+}
+
 .chat-panel {
   width: 0px;
   height: 100%;

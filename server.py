@@ -40,17 +40,17 @@ app.add_middleware(
 def read_root():
     return {"message": "Welcome to the Recipe Bot API"}
 
-class ChatRequest(BaseModel):
-    message: str
-
 def save_chatbot_to_db(chatbot : ChatBotWithHistory):
     print("Saving Chatbot to DB")
     chatbot.save_to_db(DB_PATH)
 
+class RecipeRequest(BaseModel):
+    url: str
+    annotations: str
 
-@app.get("/api/recipe")
-async def get_recipe(url: str, background_tasks: BackgroundTasks):
-    if not url:
+@app.post("/api/recipe")
+async def get_recipe(request: RecipeRequest, background_tasks: BackgroundTasks):
+    if not request.url:
         raise HTTPException(status_code=400, detail="URL parameter is required")
 
     # Create a new chatbot instance
@@ -60,12 +60,15 @@ async def get_recipe(url: str, background_tasks: BackgroundTasks):
     async def stream_generator():
         metadata = json.dumps({"thread_id": chatbot.thread_id})
         yield '[' + metadata + ','
-        for chunk in chatbot.extract_recipe(url):
+        for chunk in chatbot.extract_recipe(request.url, request.annotations):
             yield chunk
         yield ']'
 
     return StreamingResponse(stream_generator(), media_type="application/json")
 
+
+class ChatRequest(BaseModel):
+    message: str
 
 @app.post("/api/chat/{thread_id}")
 async def chat(request: ChatRequest, thread_id: str, background_tasks: BackgroundTasks):

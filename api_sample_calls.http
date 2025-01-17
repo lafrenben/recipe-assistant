@@ -7,8 +7,22 @@ content-type: application/json
 
 ###
 
-GET http://localhost:4000/api/recipe?url=https://www.allrecipes.com/recipe/10813/best-chocolate-chip-cookies/
+POST http://localhost:4000/api/recipe
 content-type: application/json
+
+{
+    "url": "https://www.allrecipes.com/recipe/10813/best-chocolate-chip-cookies/",
+    "annotations": ""
+}
+
+###
+POST http://localhost:4000/api/recipe
+content-type: application/json
+
+{
+    "url": "https://www.allrecipes.com/recipe/16248/easy-homemade-chili/",
+    "annotations": "- Annotate ingredients in US fluid oz with their mL equivalent (e.g., for '8-oz can tomato sauce', annotate '8-oz = 236.59 mL')\n"
+}
 
 ###
 
