@@ -10,7 +10,7 @@ function RecipeDisplay({ recipe, actionButtons, onUserInterfaceAction }) {
           <div className="mb-3 text-muted">
             {recipe.prep_time && `Prep Time: ${recipe.prep_time}, `}
             {recipe.cook_time && `Cook Time: ${recipe.cook_time}, `}
-            {recipe.recipe_yield && ` Yield: ${recipe.recipe_yield}`}
+            {recipe.recipe_yield && `Yield: ${recipe.recipe_yield}`}
           </div>
         )}
         {actionButtons && recipe.ingredients && ( // only show the actions once the ingredients are available
@@ -69,4 +69,3 @@ function RecipeDisplay({ recipe, actionButtons, onUserInterfaceAction }) {
 }
 
 export default RecipeDisplay;
-
