@@ -1,4 +1,4 @@
-# Recipe Assistant
+# Jump-to-Recipe
 
 ## Setup
 

@@ -6,11 +6,11 @@ function RecipeDisplay({ recipe, actionButtons, onUserInterfaceAction }) {
     <Card className="my-3">
       <Card.Body>
         {recipe.name && <Card.Title className="recipe-title">{recipe.name}</Card.Title>}
-        {(recipe.prep_time || recipe.cook_time || recipe.yield) && (
+        {(recipe.prep_time || recipe.cook_time || recipe.recipe_yield) && (
           <div className="mb-3 text-muted">
             {recipe.prep_time && `Prep Time: ${recipe.prep_time}, `}
             {recipe.cook_time && `Cook Time: ${recipe.cook_time}, `}
-            {recipe.yield && ` Yield: ${recipe.yield}`}
+            {recipe.recipe_yield && ` Yield: ${recipe.recipe_yield}`}
           </div>
         )}
         {actionButtons && recipe.ingredients && ( // only show the actions once the ingredients are available
