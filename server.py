@@ -54,7 +54,7 @@ async def get_recipe(request: RecipeRequest, background_tasks: BackgroundTasks):
         raise HTTPException(status_code=400, detail="URL parameter is required")
 
     # Create a new chatbot instance
-    chatbot = RecipeChatBot()
+    chatbot = RecipeChatBot(model=LLM_MODEL)
     background_tasks.add_task(save_chatbot_to_db, chatbot)
 
     async def stream_generator():

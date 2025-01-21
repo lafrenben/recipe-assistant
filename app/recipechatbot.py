@@ -45,6 +45,7 @@ class RecipeResponse(BaseModel):
     recipe_yield: str = Field(description="Yield of the recipe expressed as a number or a range, like '4 servings' or '2-3 dozen'. Leave blank if the yield of the recipe is not specified.")
     ingredients: List[Ingredient] = Field(description="List of ingredients with quantities.")
     instructions: List[Instruction] = Field(description="Step-by-step instructions to make the recipe.")
+    additional_info: str = Field(description="Use this field to provide any additional practical information for preparing the recipe. For example, if the page includes a warning or note about how to correctly make this recipe, provide it here. This field can also be used to supply information requested by the user. Do not use this field for information on individual ingredients or instruction steps -- those should go in the annotations fields instead. You can use Markdown to format lists provided in this field.")
 
 class StructuredResponse(BaseModel):
     type: str = Field(description="The type of 'response' -- either 'RecipeResponse' or 'ConversationalResponse'.")

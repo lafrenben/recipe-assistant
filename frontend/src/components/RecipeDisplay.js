@@ -1,5 +1,6 @@
 import React from 'react';
-import { Card, Row, Col, ListGroup, Button } from 'react-bootstrap';
+import { Card, Row, Col, ListGroup, Button, Stack } from 'react-bootstrap';
+import Markdown from 'react-markdown'
 
 function RecipeDisplay({ recipe, actionButtons, onUserInterfaceAction }) {
   return (
@@ -28,41 +29,51 @@ function RecipeDisplay({ recipe, actionButtons, onUserInterfaceAction }) {
             ))}
           </div>
         )}
-        <Row>
-          {recipe.ingredients && (
-            <Col md={6}>
-              <Card.Subtitle className="mb-2 text-muted">Ingredients</Card.Subtitle>
-              <ListGroup variant="flush">
-                {recipe.ingredients.map((ingredient) => (
-                  <ListGroup.Item key={ingredient.id}>
-                    {ingredient.quantity} {ingredient.name}
-                    {ingredient.section && <small className="text-muted"> ({ingredient.section})</small>}
-                    {ingredient.annotations && (
-                      <small className="annotations-text"> {ingredient.annotations}</small>
-                    )}
-                  </ListGroup.Item>
-                ))}
-              </ListGroup>
-            </Col>
+        <Stack gap={4}>
+          <Row>
+            {recipe.ingredients && (
+              <Col md={6}>
+                <Card.Subtitle className="mb-2 text-muted">Ingredients</Card.Subtitle>
+                <ListGroup variant="flush">
+                  {recipe.ingredients.map((ingredient) => (
+                    <ListGroup.Item key={ingredient.id}>
+                      {ingredient.quantity} {ingredient.name}
+                      {ingredient.section && <small className="text-muted"> ({ingredient.section})</small>}
+                      {ingredient.annotations && (
+                        <small className="annotations-text"> {ingredient.annotations}</small>
+                      )}
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
+              </Col>
+            )}
+            {recipe.instructions && (
+              <Col md={6}>
+                <Card.Subtitle className="mb-2 text-muted">Instructions</Card.Subtitle>
+                <ol>
+                  {recipe.instructions.map((instruction) => (
+                    <li key={instruction.id} className="instruction">
+                      {instruction.text}
+                      {instruction.annotations && (
+                        <p className="annotations">
+                          <small className="annotations-text"> {instruction.annotations}</small>
+                        </p>
+                      )}
+                    </li>
+                  ))}
+                </ol>
+              </Col>
+            )}
+          </Row>
+          {recipe.additional_info && (
+            <Row>
+              <Col md={12}>
+              <Card.Subtitle className="mb-2 text-muted">Additional Information</Card.Subtitle>
+              <Markdown>{recipe.additional_info}</Markdown>
+              </Col>
+            </Row>
           )}
-          {recipe.instructions && (
-            <Col md={6}>
-              <Card.Subtitle className="mb-2 text-muted">Instructions</Card.Subtitle>
-              <ol>
-                {recipe.instructions.map((instruction) => (
-                  <li key={instruction.id} className="instruction">
-                    {instruction.text}
-                    {instruction.annotations && (
-                      <p className="annotations">
-                        <small className="annotations-text"> {instruction.annotations}</small>
-                      </p>
-                    )}
-                  </li>
-                ))}
-              </ol>
-            </Col>
-          )}
-        </Row>
+        </Stack>
       </Card.Body>
     </Card>
   );
